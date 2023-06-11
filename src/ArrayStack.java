@@ -7,6 +7,10 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
     private int size;
 
     public ArrayStack(int maxCapacity) {
+        if (maxCapacity < 0) throw new NegativeCapacityException();
+        this.maxCapacity = maxCapacity;
+        this.size = 0;
+        this.data = new E[maxCapacity];
         // array size of max capacity
         // negative --> NegativeCapacityException (unmarked)
     }
