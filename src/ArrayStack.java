@@ -1,13 +1,12 @@
 import java.util.Iterator;
 
-
 public class ArrayStack<E extends Cloneable> implements Stack<E>{
     // E extends Cloneable ???
     private int maxCapacity;
     private E[] data;
     private int size;
 
-    public ArrayStack<E>(int maxCapacity) {
+    public ArrayStack(int maxCapacity) {
         // array size of max capacity
         // negative --> NegativeCapacityException (unmarked)
     }
