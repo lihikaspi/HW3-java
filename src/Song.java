@@ -5,11 +5,15 @@ public class Song implements Cloneable{
     private Genre genre;
     private int duration;
 
-    public Song(String name, String artist, Genre genre,int duration) {
+    public Song(String name, String artist, Genre genre, int duration) {
         this.name = name;
         this.artist = artist;
         this.genre = genre;
-        this.duration = duration; // what if negative
+        this.duration = duration;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     @Override
@@ -21,7 +25,11 @@ public class Song implements Cloneable{
 
     @Override
     public boolean equals(Object obj) {
-        // only if name == name && artist == artist
+        if (obj == null) return false;
+        if (!(obj instanceof Song))
+            return false;
+        Song song = (Song)obj;
+        return name.equals(song.name) && artist.equals(song.artist);
     }
 
     @Override
@@ -32,9 +40,14 @@ public class Song implements Cloneable{
     @Override
     public String toString() {
         // (name, artist, genre, length)
+        return "(" + name + ", "  + artist + ", " + genre + ", " + turnToMinutes() + ")";
+    }
 
-        // turn duration to mm:ss
-        return "(" + name + ", "  + artist + ", " + genre + ", " + duration + ")";
+    private String turnToMinutes() {
+        int minute = duration / 60;
+        int seconds = duration % 60;
+        if (seconds < 10) return minute + ":0" + seconds;
+        return minute + ":" + seconds;
     }
 
     public enum Genre {

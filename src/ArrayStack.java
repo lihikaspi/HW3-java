@@ -13,11 +13,33 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
         this.data = new <E>[maxCapacity];
     }
 
-    class StackIterator implements Iterable<E>{
+    class StackIterator<T extends Cloneable> implements Iterable<E>{
+        private int index;
+        private T[] array;
+
+        public StackIterator(ArrayStack<T> arrayStack) {
+            index = arrayStack.size;
+            array = arrayStack.data;
+        }
+
+        public T next() {
+            index--;
+            return array[index];
+        }
+
+        public boolean hasNext() {
+            return index > 0;
+        }
+
         @Override
         public Iterator<E> iterator() {
-            // go backwards from size to 0
+            //return array.iterator();
         }
+    }
+
+    @Override
+    public StackIterator<E> iterator() {
+        return new StackIterator<>(this);
     }
 
     @Override
@@ -49,8 +71,7 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
 
     @Override
     public boolean isEmpty() {
-         if (size == 0) return true;
-         return false;
+        return size == 0;
     }
 
     @Override
