@@ -11,18 +11,22 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         songs = new Song[2];
     }
 
-    class PlaylistIterator<Song> implements Iterable<Song>{
+    class PlaylistIterator<E> implements Iterable<E>{
+        private int index;
+        private Song[] array;
 
         public PlaylistIterator(Playlist playlist) {
-
+            index = 0;
+            array = playlist.songs;
         }
 
         public Song next() {
-
+            index++;
+            return array[index];
         }
 
         public boolean hasNext() {
-
+            return index < array.length;
         }
 
         @Override
