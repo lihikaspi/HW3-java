@@ -10,9 +10,7 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
         if (maxCapacity < 0) throw new NegativeCapacityException();
         this.maxCapacity = maxCapacity;
         this.size = 0;
-        this.data = new E[maxCapacity];
-        // array size of max capacity
-        // negative --> NegativeCapacityException (unmarked)
+        this.data = new <E>[maxCapacity];
     }
 
     class StackIterator implements Iterable<E>{
@@ -24,19 +22,18 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
 
     @Override
     public void push(E element) {
-        // if size pre adding == max capacity --> StackOverflowException (unmarked)
-
-        // first in --> data[0]
-        // last in --> data[size]
+        if (size == maxCapacity) throw new StackOverflowException();
+        data[size] = element;
+        size++;
     }
 
     @Override
     public E pop() {
-        // if size == 0 --> EmptyStackException (unmarked)
-
-        // save data[size]
-        // change data[size] = null
-        // return temp
+        if (isEmpty()) throw new EmptyStackException();
+        E temp = data[size];
+        data[size] = null;
+        size--;
+        return temp;
     }
 
     @Override
