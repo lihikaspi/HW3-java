@@ -40,10 +40,9 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
     }
 
     @Override
-    public E peek() {
-        // if size == 0 --> EmptyStackException (unmarked)
-
-        // return data[size]
+    public E peek(){
+        if (isEmpty()) throw new EmptyStackException();
+        return data[size];
     }
 
     @Override
@@ -53,7 +52,8 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
 
     @Override
     public boolean isEmpty() {
-        // if size == 0 --> true
+         if (size == 0) return true;
+         return false;
     }
 
     @Override
