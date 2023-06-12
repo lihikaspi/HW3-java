@@ -1,103 +1,67 @@
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIterable{
-    private Song[] songs;
+    private LinkedList<Song> songs;
     private int size;
     private int numberOfSongs;
 
     public Playlist() {
         size = 0;
         numberOfSongs = 0;
-        songs = new Song[2];
+        songs = new LinkedList<>();
     }
 
-    class PlaylistIterator<E> implements Iterable<E>{
+    private class PlaylistIterator<E> implements Iterable<E>{
+        private LinkedList<E> nextItem;
         private int index;
-        private Song[] array;
 
-        public PlaylistIterator(Playlist playlist) {
+        public PlaylistIterator(LinkedList<E> nextItem) {
+            this.nextItem = nextItem;
             index = 0;
-            array = playlist.songs;
         }
 
-        public Song next() {
+        public E next() {
+            E val = nextItem.get(index);
             index++;
-            return array[index];
+            return val;
         }
 
         public boolean hasNext() {
-            return index < array.length;
+            return nextItem.get(index) != null;
         }
 
         @Override
-        public Iterator<Song> iterator() {
-
+        public Iterator<E> iterator() {
+            return nextItem.iterator();
         }
     }
 
     @Override
-    public PlaylistIterator<Song> iterator() {
-        return new PlaylistIterator<>(this);
+    public Iterator<Song> iterator() {
+        return new PlaylistIterator<Song>(songs);
     }
 
     public void addSong(Song song) {
-        if (isDuplicate(song)) throw new SongAlreadyExistsException();
-        if (songs.length == size) {
-            extendPlaylist();
-        }
-        songs[numberOfSongs] = song;
+        if (songs.contains(song)) throw new SongAlreadyExistsException();
+        songs.add(song);
         numberOfSongs++;
     }
 
-    private void extendPlaylist() {
-        size *= 2;
-        Song[] newPlaylist = new Song[size];
-        for (int i = 0; i < size; i++) {
-            newPlaylist[i] = songs[i];
-        }
-        songs = newPlaylist;
-    }
-
-    private boolean isDuplicate(Song duplicate) {
-        for (Song song: songs) {
-            if (song.equals(duplicate)) return true;
-        }
-        return false;
-    }
-
     public boolean removeSong(Song song) {
-        int index = findSong(song);
+        int index = songs.indexOf(song);
         if (index == -1) return false;
-        songs[index] = null;
-        moveAfterRemove();
+        songs.remove(index);
         return true;
-    }
-
-    private void moveAfterRemove() {
-        Song[] newPlaylist = new Song[size];
-        int j = 0;
-        for (int i = 0; i < size; i++) {
-            if (songs[i] != null) {
-                newPlaylist[j] = songs[i];
-                j++;
-            }
-        }
-        songs = newPlaylist;
-    }
-
-    private int findSong(Song song) {
-        int i = 0;
-        while (songs[i] != null) {
-            if (songs[i].equals(song)) return i;
-            i++;
-        }
-        return -1;
     }
 
     @Override
     public void filterArtist(String artist) {
         // if null --> keep all
         // keep only songs by artist
+
+        Comparator.comparing();
     }
 
     @Override
@@ -113,17 +77,42 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
 
     @Override
     public void setScanningOrder(ScanningOrder order) {
+        switch (order) {
+            case ADDING:
 
+
+            case NAME:
+
+
+            case DURATION:
+
+
+        }
     }
 
     @Override
     public boolean equals(Object obj) {
+        if (obj == null) return false;
+        if (!(obj instanceof Playlist))
+            return false;
 
+        Playlist pl = (Playlist)obj;
+        int count = 0;
+        for (int i = 0; i < numberOfSongs; i++) {
+            for (int j = 0; j < pl.numberOfSongs; j++) {
+                if (songs.get(i).equals(pl.songs.get(j))) count++;
+            }
+        }
+        return count == numberOfSongs;
     }
 
     @Override
     public int hashCode() {
-
+        int hashcode = 0;
+        for (int i = 0; i < numberOfSongs; i++) {
+            hashcode += songs.get(i).hashCode();
+        }
+        return hashcode;
     }
 
     @Override
@@ -131,17 +120,23 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // [(name, artist, genre, length), ... , (name, artist, genre, length)]
         int i = 0;
         String str = "[";
-        while (songs[i] != null) {
-            if (i == 0) str += songs[i].toString();
-            else str += "," + songs[i].toString();
+        while (songs.get(i) != null) {
+            if (i == 0) str += songs.get(i).toString();
+            else str += "," + songs.get(i).toString();
         }
         return str + "]";
     }
 
     @Override
-    protected Playlist clone() throws CloneNotSupportedException {
+    protected Playlist clone() {
         // use try-catch
         // catch --> return null
         // notice if mutable
+
+        try {
+            return (Playlist) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 }

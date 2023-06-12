@@ -12,15 +12,29 @@ public class Song implements Cloneable{
         this.duration = duration;
     }
 
+    public Song(Song song) {
+        this.name = new String(song.name);
+        this.artist = new String(song.artist);
+        this.genre = song.genre;
+        this.duration = song.duration;
+    }
+
     public void setDuration(int duration) {
         this.duration = duration;
     }
 
     @Override
-    protected Song clone() throws CloneNotSupportedException {
+    protected Song clone() {
         // use try-catch
         // catch --> return null
         // notice if mutable
+
+        try {
+            // need to deep copy
+            return (Song) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 
     @Override
@@ -34,7 +48,7 @@ public class Song implements Cloneable{
 
     @Override
     public int hashCode() {
-
+        return name.hashCode() - artist.hashCode();
     }
 
     @Override

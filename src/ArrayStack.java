@@ -13,9 +13,9 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
         this.data = new <E>[maxCapacity];
     }
 
-    class StackIterator<T extends Cloneable> implements Iterable<E>{
+    private class StackIterator<T extends Cloneable> implements Iterable<E>{
         private int index;
-        private T[] array;
+        private final T[] array;
 
         public StackIterator(ArrayStack<T> arrayStack) {
             index = arrayStack.size;
@@ -33,12 +33,12 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
 
         @Override
         public Iterator<E> iterator() {
-            //return array.iterator();
+            return null;
         }
     }
 
     @Override
-    public StackIterator<E> iterator() {
+    public Iterator<E> iterator() {
         return new StackIterator<>(this);
     }
 
@@ -79,5 +79,11 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
         // use try-catch
         // catch --> return null
         // can use invoke
+
+        try {
+            return (ArrayStack<E>) super.clone();
+        } catch (CloneNotSupportedException e) {
+            return null;
+        }
     }
 }
