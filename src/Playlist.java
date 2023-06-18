@@ -13,7 +13,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         songs = new LinkedList<>();
     }
 
-    private class PlaylistIterator<E> implements Iterable<E>{
+    private class PlaylistIterator<E> implements Iterable<E>, Iterator<E>{
         private LinkedList<E> nextItem;
         private int index;
 
