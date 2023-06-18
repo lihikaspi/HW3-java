@@ -64,12 +64,13 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // keep only songs by artist
 
         filtered = clone();
-        if (artist == null) return;
+        if (artist.equals(null)) return;
 
         int i = 0;
         while (i < size) {
-            if (!(filtered.songs.get(i).getArtist().equals(artist))) {
-                filtered.removeSong(filtered.songs.get(i));
+            Song songi = filtered.songs.get(i);
+            if (!(songi.getArtist().equals(artist))) {
+                filtered.removeSong(songi);
                 continue;
             }
             i++;
