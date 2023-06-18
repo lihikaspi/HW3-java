@@ -79,10 +79,6 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
 
     @Override
     public ArrayStack<E> clone() {
-        // use try-catch
-        // catch --> return null
-        // can use invoke
-
         try {
             Method[] ms = ArrayStack.class.getMethods();
             ArrayStack<E> copy = (ArrayStack<E>) super.clone();

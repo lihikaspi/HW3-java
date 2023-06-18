@@ -1,23 +1,22 @@
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
 
 public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIterable{
-    private LinkedList<Song> songs;
+    private ArrayList<Song> songs;
+    private Playlist filtered;
     private int size;
     private int numberOfSongs;
 
     public Playlist() {
         size = 0;
         numberOfSongs = 0;
-        songs = new LinkedList<>();
+        songs = new ArrayList<>();
     }
 
     private class PlaylistIterator<E> implements Iterable<E>, Iterator<E>{
-        private LinkedList<E> nextItem;
+        private ArrayList<E> nextItem;
         private int index;
 
-        public PlaylistIterator(LinkedList<E> nextItem) {
+        public PlaylistIterator(ArrayList<E> nextItem) {
             this.nextItem = nextItem;
             index = 0;
         }
@@ -29,7 +28,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         }
 
         public boolean hasNext() {
-            return nextItem.get(index) != null;
+            return nextItem.size() > index;
         }
 
         @Override
@@ -47,12 +46,15 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         if (songs.contains(song)) throw new SongAlreadyExistsException();
         songs.add(song);
         numberOfSongs++;
+        song.setSerialNumber(numberOfSongs);
     }
 
     public boolean removeSong(Song song) {
         int index = songs.indexOf(song);
         if (index == -1) return false;
         songs.remove(index);
+        numberOfSongs--;
+        song.setSerialNumber(-1);
         return true;
     }
 
@@ -61,31 +63,70 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // if null --> keep all
         // keep only songs by artist
 
-        //Comparator.comparing();
+        filtered = clone();
+        if (artist == null) return;
+
+        for (Song song : filtered.songs) {
+            if (!(song.getArtist().equals(artist))) filtered.removeSong(song);
+        }
     }
 
     @Override
     public void filterGenre(Song.Genre genre) {
         // if null --> keep all
         // keep only songs of genre
+
+        if (genre == null) return;
+
+        for (Song song : filtered.songs) {
+            if (song.getGenre() != genre) filtered.removeSong(song);
+        }
     }
+
 
     @Override
     public void filterDuration(int maxDuration) {
         // keep only --> duration <= max duration
+
+        if (maxDuration < 0) {
+            filtered.songs = null;
+            return;
+        }
+
+        for (Song song : filtered.songs) {
+            if (song.getDuration() > maxDuration) filtered.removeSong(song);
+        }
+    }
+
+    class SortBySerialNumber implements Comparator<Song> {
+        public int compare(Song a, Song b) {
+            return a.getSerialNumber() - b.getSerialNumber();
+        }
+    }
+
+    class SortByName implements Comparator<Song> {
+        public int compare(Song a, Song b) {
+            return a.getName().compareTo(b.getName());
+        }
+    }
+
+    class SortByDuration implements Comparator<Song> {
+        public int compare(Song a, Song b) {
+            return a.getDuration() - b.getDuration();
+        }
     }
 
     @Override
     public void setScanningOrder(ScanningOrder order) {
         switch (order) {
             case ADDING:
-
+                Collections.sort(songs, new SortBySerialNumber());
 
             case NAME:
-
+                Collections.sort(songs, new SortByName());
 
             case DURATION:
-
+                Collections.sort(songs, new SortByDuration());
 
         }
     }
@@ -120,9 +161,10 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // [(name, artist, genre, length), ... , (name, artist, genre, length)]
         int i = 0;
         String str = "[";
-        while (songs.get(i) != null) {
-            if (i == 0) str += songs.get(i).toString();
-            else str += "," + songs.get(i).toString();
+        for (Song song: songs) {
+            if (i == 0) str += "(" + song.toString() + ")";
+            else str += "," + "(" + song.toString() + ")";
+            i++;
         }
         return str + "]";
     }
@@ -134,8 +176,14 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // notice if mutable
 
         try {
-            return (Playlist) super.clone();
-        } catch (CloneNotSupportedException e) {
+            Playlist copy = new Playlist();
+            for (Song song: songs) {
+                Song songCopy = song.clone();
+                if (songCopy == null) throw new NullPointerException();
+                copy.addSong(songCopy);
+            }
+            return copy;
+        } catch (NullPointerException e) {
             return null;
         }
     }

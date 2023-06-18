@@ -4,19 +4,38 @@ public class Song implements Cloneable{
     private final String artist;
     private Genre genre;
     private int duration;
+    private int serialNumber;
 
     public Song(String name, String artist, Genre genre, int duration) {
         this.name = name;
         this.artist = artist;
         this.genre = genre;
         this.duration = duration;
+        this.serialNumber = -1;
     }
 
-    public Song(Song song) {
-        this.name = new String(song.name);
-        this.artist = new String(song.artist);
-        this.genre = song.genre;
-        this.duration = song.duration;
+    public String getName() {
+        return name;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public Genre getGenre() {
+        return genre;
+    }
+
+    public int getDuration() {
+        return duration;
+    }
+
+    public int getSerialNumber() {
+        return serialNumber;
+    }
+
+    public void setSerialNumber(int serialNumber) {
+        this.serialNumber = serialNumber;
     }
 
     public void setDuration(int duration) {
@@ -25,10 +44,6 @@ public class Song implements Cloneable{
 
     @Override
     protected Song clone() {
-        // use try-catch
-        // catch --> return null
-        // notice if mutable
-
         try {
             // need to deep copy
             return (Song) super.clone();
@@ -54,7 +69,7 @@ public class Song implements Cloneable{
     @Override
     public String toString() {
         // (name, artist, genre, length)
-        return "(" + name + ", "  + artist + ", " + genre + ", " + turnToMinutes() + ")";
+        return name + ", "  + artist + ", " + genre + ", " + turnToMinutes();
     }
 
     private String turnToMinutes() {
