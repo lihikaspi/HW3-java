@@ -1,32 +1,35 @@
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 
 public class ArrayStack<E extends Cloneable> implements Stack<E>{
-    // E extends Cloneable ???
-    private int maxCapacity;
-    private E[] data;
-    private int size;
+    private final int maxCapacity;
+    private Object[] data;
+    private int size; // amount of objects in the stack right now
 
     public ArrayStack(int maxCapacity) {
         if (maxCapacity < 0) throw new NegativeCapacityException();
         this.maxCapacity = maxCapacity;
         this.size = 0;
-        this.data = new <E>[maxCapacity];
+        this.data = new Object[maxCapacity];
     }
 
     private class StackIterator<T extends Cloneable>  implements Iterable<T>, Iterator<T> {
         private int index;
-        private final T[] array;
+        private final Object[] array;
 
         public StackIterator(ArrayStack<T> arrayStack) {
             index = arrayStack.size;
             array = arrayStack.data;
         }
 
+        @Override
         public T next() {
             index--;
-            return array[index];
+            return (T)array[index];
         }
 
+        @Override
         public boolean hasNext() {
             return index > 0;
         }
@@ -52,16 +55,16 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
     @Override
     public E pop() {
         if (isEmpty()) throw new EmptyStackException();
-        E temp = data[size];
+        Object temp = data[size];
         data[size] = null;
         size--;
-        return temp;
+        return (E)temp;
     }
 
     @Override
     public E peek(){
         if (isEmpty()) throw new EmptyStackException();
-        return data[size];
+        return (E)data[size];
     }
 
     @Override
@@ -81,10 +84,18 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
         // can use invoke
 
         try {
+            Method[] ms = ArrayStack.class.getMethods();
             ArrayStack<E> copy = (ArrayStack<E>) super.clone();
+            ms[4].invoke(copy);
             copy.data = data.clone();
             return copy;
         } catch (CloneNotSupportedException e) {
+            return null;
+        } catch (IllegalAccessException e) {
+            return null;
+        } catch (IllegalArgumentException e) {
+            return null;
+        } catch (InvocationTargetException e) {
             return null;
         }
     }
