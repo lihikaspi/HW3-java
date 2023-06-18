@@ -86,7 +86,7 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
         try {
             Method[] ms = ArrayStack.class.getMethods();
             ArrayStack<E> copy = (ArrayStack<E>) super.clone();
-            ms[4].invoke(copy);
+            ms[0].invoke(copy);
             copy.data = data.clone();
             return copy;
         } catch (CloneNotSupportedException e) {
