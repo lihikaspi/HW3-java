@@ -55,16 +55,16 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
     @Override
     public E pop() {
         if (isEmpty()) throw new EmptyStackException();
-        Object temp = data[size];
-        data[size] = null;
+        E temp = (E)data[size-1];
+        data[size-1] = null;
         size--;
-        return (E)temp;
+        return temp;
     }
 
     @Override
     public E peek(){
         if (isEmpty()) throw new EmptyStackException();
-        return (E)data[size];
+        return (E)data[size-1];
     }
 
     @Override

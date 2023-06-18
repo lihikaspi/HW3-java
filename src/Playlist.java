@@ -61,7 +61,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // if null --> keep all
         // keep only songs by artist
 
-        Comparator.comparing();
+        //Comparator.comparing();
     }
 
     @Override
