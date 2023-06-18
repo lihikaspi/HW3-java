@@ -114,35 +114,24 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         }
     }
 
-    class SortBySerialNumber implements Comparator<Song> {
-        public int compare(Song a, Song b) {
-            return a.getSerialNumber() - b.getSerialNumber();
-        }
-    }
-
-    class SortByName implements Comparator<Song> {
-        public int compare(Song a, Song b) {
-            return a.getName().compareTo(b.getName());
-        }
-    }
-
-    class SortByDuration implements Comparator<Song> {
-        public int compare(Song a, Song b) {
-            return a.getDuration() - b.getDuration();
-        }
-    }
-
     @Override
     public void setScanningOrder(ScanningOrder order) {
+        Comparator<Song> compareBySerialNumber = Comparator.comparing( Song::getSerialNumber );
+        Comparator<Song> compareByName = Comparator.comparing( Song::getName );
+        Comparator<Song> compareByArtist = Comparator.comparing( Song::getArtist);
+        Comparator<Song> compareByDuration = Comparator.comparing( Song::getDuration );
+        Comparator<Song> compareByAlphabet = compareByName.thenComparing(compareByArtist);
+        Comparator<Song> compareByLength = compareByDuration.thenComparing(compareByAlphabet);
+
         switch (order) {
             case ADDING:
-                Collections.sort(songs, new SortBySerialNumber());
+                Collections.sort(filtered.songs, compareBySerialNumber);
 
             case NAME:
-                Collections.sort(songs, new SortByName());
+                Collections.sort(filtered.songs, compareByAlphabet);
 
             case DURATION:
-                Collections.sort(songs, new SortByDuration());
+                Collections.sort(filtered.songs, compareByLength);
 
         }
     }
