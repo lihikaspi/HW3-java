@@ -3,7 +3,7 @@ import java.util.*;
 public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIterable{
     private ArrayList<Song> songs;
     private Playlist filtered;
-    private int size;
+    private int size; // current amount of songs
     private int numberOfSongs;
 
     public Playlist() {
@@ -66,8 +66,13 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         filtered = clone();
         if (artist == null) return;
 
-        for (Song song : filtered.songs) {
-            if (!(song.getArtist().equals(artist))) filtered.removeSong(song);
+        int i = 0;
+        while (i < size) {
+            if (!(filtered.songs.get(i).getArtist().equals(artist))) {
+                filtered.removeSong(filtered.songs.get(i));
+                continue;
+            }
+            i++;
         }
     }
 
@@ -78,8 +83,13 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
 
         if (genre == null) return;
 
-        for (Song song : filtered.songs) {
-            if (song.getGenre() != genre) filtered.removeSong(song);
+        int i = 0;
+        while (i < size) {
+            if (!(filtered.songs.get(i).getGenre().equals(genre))) {
+                filtered.removeSong(filtered.songs.get(i));
+                continue;
+            }
+            i++;
         }
     }
 
@@ -93,8 +103,13 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
             return;
         }
 
-        for (Song song : filtered.songs) {
-            if (song.getDuration() > maxDuration) filtered.removeSong(song);
+        int i = 0;
+        while (i < size) {
+            if (filtered.songs.get(i).getDuration() > maxDuration) {
+                filtered.removeSong(filtered.songs.get(i));
+                continue;
+            }
+            i++;
         }
     }
 
@@ -150,8 +165,8 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
     @Override
     public int hashCode() {
         int hashcode = 0;
-        for (int i = 0; i < numberOfSongs; i++) {
-            hashcode += songs.get(i).hashCode();
+        for (Song song : songs) {
+            hashcode += song.hashCode();
         }
         return hashcode;
     }
