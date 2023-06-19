@@ -64,7 +64,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // keep only songs by artist
 
         filtered = clone();
-        if (artist.equals(null)) return;
+        if (artist == null) return;
 
         int i = 0;
         while (i < size) {
@@ -114,24 +114,37 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         }
     }
 
+    class SortBySerialNumber implements Comparator<Song> {
+        public int compare(Song a, Song b) {
+            return a.getSerialNumber() - b.getSerialNumber();
+        }
+    }
+
+    class SortByName implements Comparator<Song> {
+        public int compare(Song a, Song b) {
+            return a.getName().compareTo(b.getName());
+        }
+    }
+
+    class SortByDuration implements Comparator<Song> {
+        public int compare(Song a, Song b) {
+            return a.getDuration() - b.getDuration();
+        }
+    }
+
     @Override
     public void setScanningOrder(ScanningOrder order) {
-        Comparator<Song> compareBySerialNumber = Comparator.comparing( Song::getSerialNumber );
-        Comparator<Song> compareByName = Comparator.comparing( Song::getName );
-        Comparator<Song> compareByArtist = Comparator.comparing( Song::getArtist);
-        Comparator<Song> compareByDuration = Comparator.comparing( Song::getDuration );
-        Comparator<Song> compareByAlphabet = compareByName.thenComparing(compareByArtist);
-        Comparator<Song> compareByLength = compareByDuration.thenComparing(compareByAlphabet);
+        if (filtered.songs == null) return;
 
         switch (order) {
             case ADDING:
-                Collections.sort(filtered.songs, compareBySerialNumber);
+                Collections.sort(filtered.songs, new SortBySerialNumber());
 
             case NAME:
-                Collections.sort(filtered.songs, compareByAlphabet);
+                Collections.sort(filtered.songs, new SortByName());
 
             case DURATION:
-                Collections.sort(filtered.songs, compareByLength);
+                Collections.sort(filtered.songs, new SortByDuration());
 
         }
     }
@@ -168,7 +181,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         String str = "[";
         for (Song song: songs) {
             if (i == 0) str += "(" + song.toString() + ")";
-            else str += "," + "(" + song.toString() + ")";
+            else str += ", " + "(" + song.toString() + ")";
             i++;
         }
         return str + "]";
