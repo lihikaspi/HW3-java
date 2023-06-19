@@ -3,7 +3,6 @@ import java.util.*;
 public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIterable{
     private ArrayList<Song> songs;
     private Playlist filtered;
-    private int size;
     private int numberOfSongs; // current amount of songs
     private int total;
 
@@ -196,23 +195,16 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // catch --> return null
         // notice if mutable
 
-        Playlist copy = new Playlist();
-        for (Song song: songs) {
-            Song songCopy = song.clone();
-            copy.addSong(songCopy);
+        try {
+            Playlist copy = new Playlist();
+            for (Song song: songs) {
+                Song songCopy = song.clone();
+                if (songCopy == null) throw new NullPointerException();
+                copy.addSong(songCopy);
+            }
+            return copy;
+        } catch (NullPointerException e) {
+            return null;
         }
-        return copy;
-
-//        try {
-//            Playlist copy = new Playlist();
-//            for (Song song: songs) {
-//                Song songCopy = song.clone();
-//                if (songCopy == null) throw new NullPointerException();
-//                copy.addSong(songCopy);
-//            }
-//            return copy;
-//        } catch (NullPointerException e) {
-//            return null;
-//        }
     }
 }
