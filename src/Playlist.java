@@ -84,10 +84,13 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // keep only songs of genre
 
         if (genre == null) return;
+        if (filtered.songs == null) {
+            filtered.songs = new ArrayList<>();
+            filtered.numberOfSongs = 0;
+        }
 
         int i = 0;
         while (i < filtered.numberOfSongs) {
-            if (filtered.songs == null) throw new NullPointerException("hii :)");
             if (filtered.songs.get(i).getGenre().ordinal() != genre.ordinal()) {
                 filtered.removeSong(filtered.songs.get(i));
                 continue;
@@ -104,6 +107,11 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         if (maxDuration < 0) {
             filtered.songs = null;
             return;
+        }
+
+        if (filtered.songs == null) {
+            filtered.songs = new ArrayList<>();
+            filtered.numberOfSongs = 0;
         }
 
         int i = 0;
