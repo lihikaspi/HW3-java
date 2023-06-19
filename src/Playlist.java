@@ -87,6 +87,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         if (filtered.songs == null) {
             filtered.songs = new ArrayList<>();
             filtered.numberOfSongs = 0;
+            return;
         }
 
         int i = 0;
@@ -112,6 +113,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         if (filtered.songs == null) {
             filtered.songs = new ArrayList<>();
             filtered.numberOfSongs = 0;
+            return;
         }
 
         int i = 0;
