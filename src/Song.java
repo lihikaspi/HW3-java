@@ -43,7 +43,7 @@ public class Song implements Cloneable{
     }
 
     @Override
-    protected Song clone() {
+    public Song clone() {
         try {
             // need to deep copy
             return (Song) super.clone();

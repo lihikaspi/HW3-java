@@ -3,26 +3,27 @@ import java.util.*;
 public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIterable{
     private ArrayList<Song> songs;
     private Playlist filtered;
-    private int size; // current amount of songs
-    private int numberOfSongs;
+    private int size;
+    private int numberOfSongs; // current amount of songs
+    private int total;
 
     public Playlist() {
-        size = 0;
         numberOfSongs = 0;
+        total = 0;
         songs = new ArrayList<>();
     }
 
-    private class PlaylistIterator<E> implements Iterable<E>, Iterator<E>{
-        private ArrayList<E> nextItem;
+    private class PlaylistIterator implements Iterable<Song>, Iterator<Song>{
+        private ArrayList<Song> nextItem;
         private int index;
 
-        public PlaylistIterator(ArrayList<E> nextItem) {
+        public PlaylistIterator(ArrayList<Song> nextItem) {
             this.nextItem = nextItem;
             index = 0;
         }
 
-        public E next() {
-            E val = nextItem.get(index);
+        public Song next() {
+            Song val = nextItem.get(index);
             index++;
             return val;
         }
@@ -32,21 +33,22 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         }
 
         @Override
-        public Iterator<E> iterator() {
+        public Iterator<Song> iterator() {
             return nextItem.iterator();
         }
     }
 
     @Override
     public Iterator<Song> iterator() {
-        return new PlaylistIterator<Song>(songs);
+        return new PlaylistIterator(songs);
     }
 
     public void addSong(Song song) {
         if (songs.contains(song)) throw new SongAlreadyExistsException();
         songs.add(song);
         numberOfSongs++;
-        song.setSerialNumber(numberOfSongs);
+        total++;
+        song.setSerialNumber(total);
     }
 
     public boolean removeSong(Song song) {
@@ -67,7 +69,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         if (artist == null) return;
 
         int i = 0;
-        while (i < size) {
+        while (i < filtered.numberOfSongs) {
             Song songi = filtered.songs.get(i);
             if (!(songi.getArtist().equals(artist))) {
                 filtered.removeSong(songi);
@@ -85,8 +87,9 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         if (genre == null) return;
 
         int i = 0;
-        while (i < size) {
-            if (!(filtered.songs.get(i).getGenre().equals(genre))) {
+        while (i < filtered.numberOfSongs) {
+            if (filtered.songs == null) throw new NullPointerException("hii :)");
+            if (filtered.songs.get(i).getGenre().ordinal() != genre.ordinal()) {
                 filtered.removeSong(filtered.songs.get(i));
                 continue;
             }
@@ -105,7 +108,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         }
 
         int i = 0;
-        while (i < size) {
+        while (i < filtered.numberOfSongs) {
             if (filtered.songs.get(i).getDuration() > maxDuration) {
                 filtered.removeSong(filtered.songs.get(i));
                 continue;
@@ -188,21 +191,28 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
     }
 
     @Override
-    protected Playlist clone() {
+    public Playlist clone() {
         // use try-catch
         // catch --> return null
         // notice if mutable
 
-        try {
-            Playlist copy = new Playlist();
-            for (Song song: songs) {
-                Song songCopy = song.clone();
-                if (songCopy == null) throw new NullPointerException();
-                copy.addSong(songCopy);
-            }
-            return copy;
-        } catch (NullPointerException e) {
-            return null;
+        Playlist copy = new Playlist();
+        for (Song song: songs) {
+            Song songCopy = song.clone();
+            copy.addSong(songCopy);
         }
+        return copy;
+
+//        try {
+//            Playlist copy = new Playlist();
+//            for (Song song: songs) {
+//                Song songCopy = song.clone();
+//                if (songCopy == null) throw new NullPointerException();
+//                copy.addSong(songCopy);
+//            }
+//            return copy;
+//        } catch (NullPointerException e) {
+//            return null;
+//        }
     }
 }
