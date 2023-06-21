@@ -53,6 +53,18 @@ public class Song implements Cloneable{
         this.duration = duration;
     }
 
+    public boolean removeFromFilter(String artist, Genre genre, int maxDuration) {
+        if (artist != null) {
+            if (!(artist.equals(this.artist))) return true;
+        }
+        if (genre != null) {
+            if (genre.ordinal() != this.genre.ordinal()) return true;
+        }
+        if (duration > maxDuration) return true;
+
+        return false;
+    }
+
     @Override
     public Song clone() {
         try {

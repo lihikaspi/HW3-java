@@ -6,9 +6,13 @@ import java.util.*;
  */
 public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIterable{
     private ArrayList<Song> songs;
-    private Playlist filtered; // a filtered Playlist of current Playlist
     private int numberOfSongs; // current amount of songs
     private int total; // total amount of songs that are/were in the playlist
+
+    // filters
+    private String filterByArtist;
+    private Song.Genre filterByGenre;
+    private int filterByDuration;
 
     /**
      * Constructs a new playlist
@@ -88,18 +92,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // if null --> keep all
         // keep only songs by artist
 
-        filtered = clone();
-        if (artist == null) return;
-
-        int i = 0;
-        while (i < filtered.numberOfSongs) {
-            Song songi = filtered.songs.get(i);
-            if (!(songi.getArtist().equals(artist))) {
-                filtered.removeSong(songi);
-                continue;
-            }
-            i++;
-        }
+        filterByArtist = artist;
     }
 
     @Override
@@ -107,21 +100,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         // if null --> keep all
         // keep only songs of genre
 
-        if (genre == null) return;
-        if (filtered.songs == null) {
-            filtered.songs = new ArrayList<>();
-            filtered.numberOfSongs = 0;
-            return;
-        }
-
-        int i = 0;
-        while (i < filtered.numberOfSongs) {
-            if (filtered.songs.get(i).getGenre().ordinal() != genre.ordinal()) {
-                filtered.removeSong(filtered.songs.get(i));
-                continue;
-            }
-            i++;
-        }
+        filterByGenre = genre;
     }
 
 
@@ -129,47 +108,12 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
     public void filterDuration(int maxDuration) {
         // keep only --> duration <= max duration
 
-        if (maxDuration < 0) {
-            filtered.songs = null;
-            return;
-        }
-
-        if (filtered.songs == null) {
-            filtered.songs = new ArrayList<>();
-            filtered.numberOfSongs = 0;
-            return;
-        }
-
-        int i = 0;
-        while (i < filtered.numberOfSongs) {
-            if (filtered.songs.get(i).getDuration() > maxDuration) {
-                filtered.removeSong(filtered.songs.get(i));
-                continue;
-            }
-            i++;
-        }
-    }
-
-    class SortBySerialNumber implements Comparator<Song> {
-        public int compare(Song a, Song b) {
-            return a.getSerialNumber() - b.getSerialNumber();
-        }
-    }
-
-    class SortByName implements Comparator<Song> {
-        public int compare(Song a, Song b) {
-            return a.getName().compareTo(b.getName());
-        }
-    }
-
-    class SortByDuration implements Comparator<Song> {
-        public int compare(Song a, Song b) {
-            return a.getDuration() - b.getDuration();
-        }
+        filterByDuration = maxDuration;
     }
 
     @Override
     public void setScanningOrder(ScanningOrder order) {
+        ArrayList<Song> filtered = filter();
 
         Comparator<Song> compareBySerialNumber = Comparator.comparing( Song::getSerialNumber );
         Comparator<Song> compareByName = Comparator.comparing( Song::getName );
@@ -177,22 +121,34 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         Comparator<Song> compareByDuration = Comparator.comparing( Song::getDuration );
         Comparator<Song> compareByAlphabet = compareByName.thenComparing(compareByArtist);
         Comparator<Song> compareByLength = compareByDuration.thenComparing(compareByAlphabet);
-        if (filtered.songs == null) return;
 
         switch (order) {
             case ADDING:
-                Collections.sort(filtered.songs, compareBySerialNumber);
-                Collections.sort(filtered.songs, new SortBySerialNumber());
+                Collections.sort(filtered, compareBySerialNumber);
 
             case NAME:
-                Collections.sort(filtered.songs, compareByAlphabet);
-                Collections.sort(filtered.songs, new SortByName());
+                Collections.sort(filtered, compareByAlphabet);
 
             case DURATION:
-                Collections.sort(filtered.songs, compareByLength);
-                Collections.sort(filtered.songs, new SortByDuration());
+                Collections.sort(filtered, compareByLength);
 
         }
+    }
+
+    private ArrayList<Song> filter() {
+        Playlist pl = clone();
+        int i = 0;
+        int size = this.numberOfSongs;
+        while(i < size) {
+            Song song = pl.songs.get(i);
+            if (song.removeFromFilter(filterByArtist, filterByGenre, filterByDuration)) {
+                pl.songs.remove(song);
+                size--;
+                continue;
+            }
+            i++;
+        }
+        return pl.songs;
     }
 
     @Override
