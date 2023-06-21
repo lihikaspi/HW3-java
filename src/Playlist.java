@@ -170,16 +170,26 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
 
     @Override
     public void setScanningOrder(ScanningOrder order) {
+
+        Comparator<Song> compareBySerialNumber = Comparator.comparing( Song::getSerialNumber );
+        Comparator<Song> compareByName = Comparator.comparing( Song::getName );
+        Comparator<Song> compareByArtist = Comparator.comparing( Song::getArtist);
+        Comparator<Song> compareByDuration = Comparator.comparing( Song::getDuration );
+        Comparator<Song> compareByAlphabet = compareByName.thenComparing(compareByArtist);
+        Comparator<Song> compareByLength = compareByDuration.thenComparing(compareByAlphabet);
         if (filtered.songs == null) return;
 
         switch (order) {
             case ADDING:
+                Collections.sort(filtered.songs, compareBySerialNumber);
                 Collections.sort(filtered.songs, new SortBySerialNumber());
 
             case NAME:
+                Collections.sort(filtered.songs, compareByAlphabet);
                 Collections.sort(filtered.songs, new SortByName());
 
             case DURATION:
+                Collections.sort(filtered.songs, compareByLength);
                 Collections.sort(filtered.songs, new SortByDuration());
 
         }
