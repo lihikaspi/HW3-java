@@ -100,9 +100,11 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
     public ArrayStack<E> clone() {
         try {
             ArrayStack<E> copy = (ArrayStack<E>) super.clone();
+            Object[] newStack = new Object[maxCapacity];
             for (int i = 0; i < size; i++) {
-                copy.stack[i] = copy.stack[i].getClass().getMethod("clone").invoke(copy.stack[i]);
+                newStack[i] = copy.stack[i].getClass().getMethod("clone").invoke(copy.stack[i]);
             }
+            copy.stack = newStack;
             return copy;
         } catch (Exception e) {
             System.out.println(e.getMessage() + ", " + e.getClass().getSimpleName());
