@@ -1,5 +1,4 @@
 import java.lang.reflect.InvocationTargetException;
-import java.net.StandardSocketOptions;
 import java.util.Iterator;
 
 /**
@@ -102,7 +101,7 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
         try {
             ArrayStack<E> copy = (ArrayStack<E>) super.clone();
             for (int i = 0; i < size; i++) {
-                copy.stack[i].getClass().getMethod("clone").invoke(copy.stack[i]);
+                copy.stack[i] = copy.stack[i].getClass().getMethod("clone").invoke(copy.stack[i]);
             }
             return copy;
         } catch (Exception e) {
