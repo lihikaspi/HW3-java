@@ -1,3 +1,7 @@
+/**
+ * This class represents an unchecked stack exception
+ * Inherits RunTimeException
+ */
 public class StackException extends RuntimeException{
 
     public StackException() {

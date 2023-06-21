@@ -1,4 +1,9 @@
+/**
+ * This class represents an unchecked song already exits exception
+ * Inherits RunTimeException
+ */
 public class SongAlreadyExistsException extends RuntimeException {
+
     public SongAlreadyExistsException() {
 
     }

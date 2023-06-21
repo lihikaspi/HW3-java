@@ -1,11 +1,22 @@
+/**
+ * This class represents a song
+ * Implements Cloneable
+ */
 public class Song implements Cloneable{
-
-    private final String name;
-    private final String artist;
+    private final String name; // name of the song
+    private final String artist; // name of the artist
     private Genre genre;
-    private int duration;
+    private int duration; // time in seconds
     private int serialNumber;
 
+    /**
+     * Constructs a new song
+     *
+     * @param name name of the song
+     * @param artist name of the artist
+     * @param genre genre of the song
+     * @param duration time of the song in seconds
+     */
     public Song(String name, String artist, Genre genre, int duration) {
         this.name = name;
         this.artist = artist;
@@ -72,6 +83,11 @@ public class Song implements Cloneable{
         return name + ", "  + artist + ", " + genre + ", " + turnToMinutes();
     }
 
+    /**
+     * Converts the duration from seconds to mm:ss format
+     *
+     * @return time of the song in mm:ss format
+     */
     private String turnToMinutes() {
         int minute = duration / 60;
         int seconds = duration % 60;
@@ -79,6 +95,9 @@ public class Song implements Cloneable{
         return minute + ":" + seconds;
     }
 
+    /**
+     * Enum representing possible genres of songs
+     */
     public enum Genre {
         POP,
         ROCK,

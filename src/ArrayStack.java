@@ -2,25 +2,49 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
 
+/**
+ * This class represents a stack
+ * Implements Stack
+ *
+ * @param <E> a cloneable type of objects in the stack
+ */
+
 public class ArrayStack<E extends Cloneable> implements Stack<E>{
     private final int maxCapacity;
-    private Object[] data;
+    private Object[] stack;
     private int size; // amount of objects in the stack right now
 
+    /**
+     * Constructs a new stack
+     *
+     * @param maxCapacity maximum amount of objects in the stack
+     */
     public ArrayStack(int maxCapacity) {
         if (maxCapacity < 0) throw new NegativeCapacityException();
         this.maxCapacity = maxCapacity;
         this.size = 0;
-        this.data = new Object[maxCapacity];
+        this.stack = new Object[maxCapacity];
     }
 
-    private class StackIterator<T extends Cloneable>  implements Iterable<T>, Iterator<T> {
+    /**
+     * This class represents an Iterator
+     * Implements Iterator
+     *
+     * @param <T> a cloneable type of objects to iterate
+     */
+    private class StackIterator<T extends Cloneable>  implements Iterator<T> {
         private int index;
         private final Object[] array;
 
+
+        /**
+         * Constructs a new stack iterator
+         *
+         * @param arrayStack stack to iterate
+         */
         public StackIterator(ArrayStack<T> arrayStack) {
             index = arrayStack.size;
-            array = arrayStack.data;
+            array = arrayStack.stack;
         }
 
         @Override
@@ -33,12 +57,8 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
         public boolean hasNext() {
             return index > 0;
         }
-
-        @Override
-        public Iterator<T> iterator() {
-            return null;
-        }
     }
+
 
     @Override
     public Iterator<E> iterator() {
@@ -48,15 +68,15 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
     @Override
     public void push(E element) {
         if (size == maxCapacity) throw new StackOverflowException();
-        data[size] = element;
+        stack[size] = element;
         size++;
     }
 
     @Override
     public E pop() {
         if (isEmpty()) throw new EmptyStackException();
-        E temp = (E)data[size-1];
-        data[size-1] = null;
+        E temp = (E)stack[size-1];
+        stack[size-1] = null;
         size--;
         return temp;
     }
@@ -64,7 +84,7 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
     @Override
     public E peek(){
         if (isEmpty()) throw new EmptyStackException();
-        return (E)data[size-1];
+        return (E)stack[size-1];
     }
 
     @Override
@@ -83,7 +103,7 @@ public class ArrayStack<E extends Cloneable> implements Stack<E>{
             Method[] ms = ArrayStack.class.getMethods();
             ArrayStack<E> copy = (ArrayStack<E>) super.clone();
             ms[0].invoke(copy);
-            copy.data = data.clone();
+            copy.stack = stack.clone();
             return copy;
         } catch (CloneNotSupportedException e) {
             return null;

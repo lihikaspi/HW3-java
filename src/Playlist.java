@@ -1,39 +1,52 @@
 import java.util.*;
 
+/**
+ * This class represents a song playlist
+ * Implements Cloneable, FilteredSongIterable, OrderedSongIterable
+ */
 public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIterable{
     private ArrayList<Song> songs;
-    private Playlist filtered;
+    private Playlist filtered; // a filtered Playlist of current Playlist
     private int numberOfSongs; // current amount of songs
-    private int total;
+    private int total; // total amount of songs that are/were in the playlist
 
+    /**
+     * Constructs a new playlist
+     */
     public Playlist() {
         numberOfSongs = 0;
         total = 0;
         songs = new ArrayList<>();
     }
 
-    private class PlaylistIterator implements Iterable<Song>, Iterator<Song>{
-        private ArrayList<Song> nextItem;
+    /**
+     * This class represents an Iterator
+     * Implements Iterator
+     */
+    private class PlaylistIterator implements Iterator<Song>{
+        private ArrayList<Song> playlist;
         private int index;
 
-        public PlaylistIterator(ArrayList<Song> nextItem) {
-            this.nextItem = nextItem;
+        /**
+         * Constructs a new playlist iterator
+         *
+         * @param playlist playlist to iterate
+         */
+        public PlaylistIterator(ArrayList<Song> playlist) {
+            this.playlist = playlist;
             index = 0;
         }
 
+        @Override
         public Song next() {
-            Song val = nextItem.get(index);
+            Song val = playlist.get(index);
             index++;
             return val;
         }
 
-        public boolean hasNext() {
-            return nextItem.size() > index;
-        }
-
         @Override
-        public Iterator<Song> iterator() {
-            return nextItem.iterator();
+        public boolean hasNext() {
+            return playlist.size() > index;
         }
     }
 
@@ -42,6 +55,11 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         return new PlaylistIterator(songs);
     }
 
+    /**
+     * Adds a new song to the playlist
+     *
+     * @param song song to add
+     */
     public void addSong(Song song) {
         if (songs.contains(song)) throw new SongAlreadyExistsException();
         songs.add(song);
@@ -50,6 +68,12 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         song.setSerialNumber(total);
     }
 
+    /**
+     * Removes a song from the playlist
+     *
+     * @param song song to remove
+     * @return was the remove successful
+     */
     public boolean removeSong(Song song) {
         int index = songs.indexOf(song);
         if (index == -1) return false;
