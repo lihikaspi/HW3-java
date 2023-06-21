@@ -6,6 +6,7 @@ import java.util.*;
  */
 public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIterable{
     private ArrayList<Song> songs;
+    private ArrayList<Song> backupPlaylist;
     private int numberOfSongs; // current amount of songs
     private int total; // total amount of songs that are/were in the playlist
 
@@ -21,6 +22,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         numberOfSongs = 0;
         total = 0;
         songs = new ArrayList<>();
+        backupPlaylist = songs;
     }
 
     /**
@@ -89,25 +91,17 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
 
     @Override
     public void filterArtist(String artist) {
-        // if null --> keep all
-        // keep only songs by artist
-
         filterByArtist = artist;
     }
 
     @Override
     public void filterGenre(Song.Genre genre) {
-        // if null --> keep all
-        // keep only songs of genre
-
         filterByGenre = genre;
     }
 
 
     @Override
     public void filterDuration(int maxDuration) {
-        // keep only --> duration <= max duration
-
         filterByDuration = maxDuration;
     }
 
@@ -133,6 +127,7 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
                 Collections.sort(filtered, compareByLength);
 
         }
+        songs = filtered;
     }
 
     private ArrayList<Song> filter() {
