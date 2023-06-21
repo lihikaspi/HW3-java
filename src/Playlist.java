@@ -119,18 +119,22 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
         switch (order) {
             case ADDING:
                 Collections.sort(filtered, compareBySerialNumber);
+                break;
 
             case NAME:
                 Collections.sort(filtered, compareByAlphabet);
+                break;
 
             case DURATION:
                 Collections.sort(filtered, compareByLength);
+                break;
 
         }
         songs = filtered;
     }
 
     private ArrayList<Song> filter() {
+        songs = backupPlaylist;
         Playlist pl = clone();
         int i = 0;
         int size = this.numberOfSongs;
