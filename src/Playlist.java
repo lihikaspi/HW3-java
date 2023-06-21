@@ -6,7 +6,7 @@ import java.util.*;
  */
 public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIterable{
     private ArrayList<Song> songs;
-    private ArrayList<Song> backupPlaylist;
+    private ArrayList<Song> backupPlaylist; // saves the pointer of the original playlist
     private int numberOfSongs; // current amount of songs
     private int total; // total amount of songs that are/were in the playlist
 
@@ -130,11 +130,16 @@ public class Playlist implements Cloneable, FilteredSongIterable, OrderedSongIte
                 break;
 
         }
-        songs = filtered;
+        songs = filtered; // switches the main list to be the filtered one
     }
 
+    /**
+     * Filters the playlist according to the given parameters in previous methods
+     *
+     * @return filtered playlist
+     */
     private ArrayList<Song> filter() {
-        songs = backupPlaylist;
+        songs = backupPlaylist; // restores the original list as the main list
         Playlist pl = clone();
         int i = 0;
         int size = this.numberOfSongs;
